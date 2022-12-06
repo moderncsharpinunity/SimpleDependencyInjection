@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleDependencyInjection
 {
-    public class DependenciesProvider
+    public class DependenciesProvider : IServiceProvider
     {
         private Dictionary<Type, Dependency> dependencies = new Dictionary<Type, Dependency>();
         private Dictionary<Type, object> singletons = new Dictionary<Type, object>();
@@ -21,7 +17,7 @@ namespace SimpleDependencyInjection
             }
         }
 
-        public object Get(Type type)
+        public object GetService(Type type)
         {
             if (!dependencies.ContainsKey(type))
             {
@@ -43,11 +39,11 @@ namespace SimpleDependencyInjection
             }
         }
 
-        public T Get<T>()
+        public T GetService<T>()
         {
-            return (T)Get(typeof(T));
+            return (T)GetService(typeof(T));
         }
-        
+
         public object Inject(object dependant)
         {
             Type type = dependant.GetType();
@@ -58,7 +54,7 @@ namespace SimpleDependencyInjection
                 {
                     if (field.GetCustomAttribute<InjectFieldAttribute>(false) == null) { continue; }
 
-                    field.SetValue(dependant, Get(field.FieldType));
+                    field.SetValue(dependant, GetService(field.FieldType));
                 }
                 type = type.BaseType;
             }
