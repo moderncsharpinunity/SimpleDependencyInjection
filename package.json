@@ -1,6 +1,6 @@
 {
     "name": "com.moderncsharpinunity.simpledependencyinjection",
-    "version": "0.2",
+    "version": "0.2.1",
     "displayName": "Simple Dependency Injection",
     "description": "This is a simple dependency injection framework for Unity3D, started as part of a blog to explain how to build your own dependency injection in Unity3D, but now will be evolved and maintained as an independent software.",
     "unity": "2020.3",
@@ -13,5 +13,12 @@
     "author": {
         "name": "Ruben Gonzalez",
         "url": "https://moderncsharpinunity.github.io"
-    }
+    },
+    "samples": [
+        {
+            "displayName": "Default Sample",
+            "description": "Contains sample code and setup for dependency injection",
+            "path": "Samples~/Example"
+        }
+    ]
 }
