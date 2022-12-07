@@ -1,58 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 using System.Runtime.Serialization;
+using UnityEngine;
 
 namespace SimpleDependencyInjection
 {
-    public static class DependencyFactory
+    public static class ServiceFactory
     {
-        public delegate object Delegate(DependenciesProvider dependencies);
-
-        public static Delegate FromClass<T>() where T : class, new()
+        public static ServiceFactoryDelegate FromClass<T>() where T : class, new()
         {
-            return (dependencies) =>
+            return (serviceProvider) =>
             {
                 var type = typeof(T);
                 var obj = FormatterServices.GetUninitializedObject(type);
 
-                dependencies.Inject(obj);
-
-                type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
+                ServiceInjector.Inject(obj, serviceProvider);
 
                 return (T)obj;
             };
         }
 
-        public static Delegate FromPrefab<T>(T prefab) where T : MonoBehaviour
+        public static ServiceFactoryDelegate FromPrefab<T>(T prefab) where T : MonoBehaviour
         {
-            return (dependencies) =>
+            return (serviceProvider) =>
             {
                 bool wasActive = prefab.gameObject.activeSelf;
                 prefab.gameObject.SetActive(false);
                 var instance = GameObject.Instantiate(prefab);
                 prefab.gameObject.SetActive(wasActive);
+
                 var children = instance.GetComponentsInChildren<MonoBehaviour>(true);
                 foreach (var child in children)
                 {
-                    dependencies.Inject(child);
+                    ServiceInjector.Inject(child, serviceProvider);
                 }
+
                 instance.gameObject.SetActive(wasActive);
                 return instance.GetComponent<T>();
             };
         }
 
-        public static Delegate FromGameObject<T>(T instance) where T : MonoBehaviour
+        public static ServiceFactoryDelegate FromGameObject<T>(T instance) where T : MonoBehaviour
         {
-            return (dependencies) =>
+            return (serviceProvider) =>
             {
                 var children = instance.GetComponentsInChildren<MonoBehaviour>(true);
                 foreach (var child in children)
                 {
-                    dependencies.Inject(child);
+                    ServiceInjector.Inject(child, serviceProvider);
                 }
                 return instance;
             };

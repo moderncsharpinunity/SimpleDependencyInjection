@@ -5,10 +5,12 @@ using UnityEngine;
 
 namespace SimpleDependencyInjection
 {
-    public struct Dependency
+    public struct ServiceDescriptor
     {
         public Type Type { get; set; }
-        public DependencyFactory.Delegate Factory { get; set; }
+        public ServiceFactoryDelegate Factory { get; set; }
         public bool IsSingleton { get; set; }
     }
+
+    public delegate object ServiceFactoryDelegate(IServiceProvider dependencies);
 }

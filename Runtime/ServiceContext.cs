@@ -7,10 +7,10 @@ using UnityEngine;
 namespace SimpleDependencyInjection
 {
     [DefaultExecutionOrder(-1)]
-    public abstract class DependenciesContext : MonoBehaviour
+    public abstract class ServiceContext : MonoBehaviour
     {
-        protected DependenciesCollection dependenciesCollection = new DependenciesCollection();
-        private DependenciesProvider dependenciesProvider;
+        protected ServiceCollection dependenciesCollection = new ServiceCollection();
+        private ServiceProvider dependenciesProvider;
 
 
         private void Awake()
@@ -18,12 +18,12 @@ namespace SimpleDependencyInjection
             DontDestroyOnLoad(gameObject);
             Setup();
 
-            dependenciesProvider = new DependenciesProvider(dependenciesCollection);
+            dependenciesProvider = new ServiceProvider(dependenciesCollection);
 
             var children = GetComponentsInChildren<MonoBehaviour>(true);
             foreach (var child in children)
             {
-                dependenciesProvider.Inject(child);
+                ServiceInjector.Inject(child, dependenciesProvider);
             }
 
             Configure();
