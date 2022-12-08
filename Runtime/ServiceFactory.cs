@@ -6,7 +6,7 @@ namespace SimpleDependencyInjection
 {
     public static class ServiceFactory
     {
-        public static ServiceFactoryDelegate FromClass<T>() where T : class, new()
+        public static ServiceFactoryDelegate<T> FromNew<T>() where T : class
         {
             return (serviceProvider) =>
             {
@@ -19,7 +19,7 @@ namespace SimpleDependencyInjection
             };
         }
 
-        public static ServiceFactoryDelegate FromPrefab<T>(T prefab) where T : MonoBehaviour
+        public static ServiceFactoryDelegate<T> FromPrefab<T>(T prefab) where T : MonoBehaviour
         {
             return (serviceProvider) =>
             {
@@ -39,7 +39,23 @@ namespace SimpleDependencyInjection
             };
         }
 
-        public static ServiceFactoryDelegate FromGameObject<T>(T instance) where T : MonoBehaviour
+        public static ServiceFactoryDelegate<T> FromNewGameObject<T>() where T : MonoBehaviour
+        {
+            return (serviceProvider) =>
+            {
+                var type = typeof(T);
+                var gameObject = new GameObject(type.Name);
+                gameObject.SetActive(false);
+                var instance = gameObject.AddComponent(type);
+
+                ServiceInjector.Inject(instance, serviceProvider);
+
+                gameObject.SetActive(true);
+                return (T)instance;
+            };
+        }
+
+        public static ServiceFactoryDelegate<T> FromGameObject<T>(T instance) where T : MonoBehaviour
         {
             return (serviceProvider) =>
             {

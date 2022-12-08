@@ -25,7 +25,7 @@ namespace SimpleDependencyInjection
             }
 
             var dependency = dependencies[type];
-            if (dependency.IsSingleton)
+            if (dependency.Lifetime == ServiceLifetime.Singleton)
             {
                 if (!singletons.ContainsKey(type))
                 {

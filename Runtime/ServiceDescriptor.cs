@@ -5,12 +5,27 @@ using UnityEngine;
 
 namespace SimpleDependencyInjection
 {
-    public struct ServiceDescriptor
+    public class ServiceDescriptor
     {
-        public Type Type { get; set; }
-        public ServiceFactoryDelegate Factory { get; set; }
-        public bool IsSingleton { get; set; }
+        public ServiceDescriptor(Type type, ServiceLifetime lifetime, ServiceFactoryDelegate factory) 
+        {
+            Type = type;
+            Lifetime = lifetime;
+            Factory = factory;
+        }
+
+        public Type Type { get; }
+        public ServiceLifetime Lifetime { get; }
+        public ServiceFactoryDelegate Factory { get; }
+    }
+
+    public enum ServiceLifetime
+    {
+        Singleton,
+        Transient,
+        Scoped,
     }
 
     public delegate object ServiceFactoryDelegate(IServiceProvider dependencies);
+    public delegate T ServiceFactoryDelegate<out T>(IServiceProvider dependencies) where T : class;
 }

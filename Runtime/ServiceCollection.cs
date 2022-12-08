@@ -6,12 +6,12 @@ namespace SimpleDependencyInjection
 {
     public class ServiceCollection : IEnumerable<ServiceDescriptor>, IServiceCollection
     {
-        private List<ServiceDescriptor> dependencies = new List<ServiceDescriptor>();
+        private List<ServiceDescriptor> services = new List<ServiceDescriptor>();
 
-        public void Add(ServiceDescriptor dependency) => dependencies.Add(dependency);
+        public void Register(ServiceDescriptor service) => services.Add(service);
 
-        public IEnumerator<ServiceDescriptor> GetEnumerator() => dependencies.GetEnumerator();
+        public IEnumerator<ServiceDescriptor> GetEnumerator() => services.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => dependencies.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => services.GetEnumerator();
     }
 }
