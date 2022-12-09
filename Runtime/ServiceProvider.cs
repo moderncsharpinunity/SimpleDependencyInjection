@@ -8,19 +8,27 @@ namespace SimpleDependencyInjection
     {
         private readonly Dictionary<Type, ServiceDescriptor> dependencies = new Dictionary<Type, ServiceDescriptor>();
         private readonly Dictionary<Type, object> singletons = new Dictionary<Type, object>();
+        private readonly IServiceProvider parentServiceProvider;
 
-        public ServiceProvider(ServiceCollection dependencies)
+        public ServiceProvider(ServiceCollection dependencies, IServiceProvider parentServiceProvider = null)
         {
             foreach (var dependency in dependencies)
             {
                 this.dependencies.Add(dependency.Type, dependency);
             }
+
+            this.parentServiceProvider = parentServiceProvider;
         }
 
         public object GetService(Type type)
         {
             if (!dependencies.ContainsKey(type))
             {
+                if (parentServiceProvider!= null)
+                {
+                    return parentServiceProvider.GetService(type);
+                }
+
                 throw new ArgumentException("Type is not a dependency: " + type.FullName);
             }
 
