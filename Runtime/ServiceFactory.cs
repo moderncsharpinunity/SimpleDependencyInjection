@@ -28,11 +28,7 @@ namespace SimpleDependencyInjection
                 var instance = GameObject.Instantiate(prefab);
                 prefab.gameObject.SetActive(wasActive);
 
-                var children = instance.GetComponentsInChildren<MonoBehaviour>(true);
-                foreach (var child in children)
-                {
-                    ServiceInjector.Inject(child, serviceProvider);
-                }
+                ServiceInjector.InjectRecursively(instance, serviceProvider);
 
                 instance.gameObject.SetActive(wasActive);
                 return instance.GetComponent<T>();
@@ -59,11 +55,7 @@ namespace SimpleDependencyInjection
         {
             return (serviceProvider) =>
             {
-                var children = instance.GetComponentsInChildren<MonoBehaviour>(true);
-                foreach (var child in children)
-                {
-                    ServiceInjector.Inject(child, serviceProvider);
-                }
+                ServiceInjector.InjectRecursively(instance, serviceProvider);
                 return instance;
             };
         }

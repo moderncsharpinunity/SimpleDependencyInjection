@@ -12,21 +12,19 @@ namespace SimpleDependencyInjection
     [DefaultExecutionOrder(-1)]
     public abstract class ServiceContext : MonoBehaviour
     {
-        private List<IModuleAsync> modules = new List<IModuleAsync>();
-        private ServiceCollection serviceCollection = new ServiceCollection();
+        private readonly List<IModuleAsync> modules = new List<IModuleAsync>();
         private ServiceProvider serviceProvider;
 
+        public IServiceProvider ServiceProvider => serviceProvider;
 
-        private void Awake()
-        {
-            Init();
-        }
-
-        private async void Init()
+        private async void Awake()
         {
             DontDestroyOnLoad(gameObject);
             Setup();
 
+            gameObject.SetActive(false);
+
+            var serviceCollection = new ServiceCollection();
             foreach (var module in modules)
             {
                 await module.Configure(serviceCollection);
@@ -39,11 +37,9 @@ namespace SimpleDependencyInjection
                 await module.Init(serviceProvider);
             }
 
-            var children = GetComponentsInChildren<MonoBehaviour>(true);
-            foreach (var child in children)
-            {
-                ServiceInjector.Inject(child, serviceProvider);
-            }            
+            ServiceInjector.InjectRecursively(this, serviceProvider);
+
+            gameObject.SetActive(true);
         }
 
         protected abstract void Setup();

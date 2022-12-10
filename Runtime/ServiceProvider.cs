@@ -24,7 +24,7 @@ namespace SimpleDependencyInjection
         {
             if (!dependencies.ContainsKey(type))
             {
-                if (parentServiceProvider!= null)
+                if (parentServiceProvider != null)
                 {
                     return parentServiceProvider.GetService(type);
                 }
@@ -34,6 +34,19 @@ namespace SimpleDependencyInjection
 
             var dependency = dependencies[type];
             if (dependency.Lifetime == ServiceLifetime.Singleton)
+            {
+                if (parentServiceProvider != null)
+                {
+                    return parentServiceProvider.GetService(type);
+                }
+
+                if (!singletons.ContainsKey(type))
+                {
+                    singletons.Add(type, dependency.Factory(this));
+                }
+                return singletons[type];
+            }
+            else if (dependency.Lifetime == ServiceLifetime.Scoped)
             {
                 if (!singletons.ContainsKey(type))
                 {

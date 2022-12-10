@@ -4,6 +4,7 @@ using Task = Cysharp.Threading.Tasks.UniTask;
 #else
 using Task = System.Threading.Tasks.Task;
 #endif
+
 namespace SimpleDependencyInjection
 {
     public interface IModuleAsync

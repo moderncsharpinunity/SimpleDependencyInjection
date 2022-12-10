@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks.Triggers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 
 namespace SimpleDependencyInjection
 {
@@ -33,6 +35,25 @@ namespace SimpleDependencyInjection
 
         private static readonly Dictionary<Type, TypeCache> typesCache = new Dictionary<Type, TypeCache>();
         private static readonly Type unityObjectType = typeof(UnityEngine.Object);
+
+        public static void InjectRecursively(MonoBehaviour monoBehaviour, IServiceProvider serviceProvider)
+        {
+            var serviceScopeType = typeof(ServiceScope);
+            var children = monoBehaviour.GetComponentsInChildren<MonoBehaviour>(true);
+            foreach (var child in children)
+            {
+                if (serviceScopeType.IsAssignableFrom(child.GetType())) continue;
+
+                var serviceScope = (ServiceScope)child.GetComponentInParent(serviceScopeType);
+                if (serviceScope != null && serviceScope.ServiceProvider == null)
+                {
+                    serviceScope.Setup(serviceProvider);
+                }
+
+                Inject((object)child, serviceScope != null ? serviceScope.ServiceProvider : serviceProvider);
+            }
+        }
+
 
         public static void Inject(object dependant, IServiceProvider serviceProvider)
         {
