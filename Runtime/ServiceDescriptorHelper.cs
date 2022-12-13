@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SimpleDependencyInjection
 {
@@ -97,14 +92,6 @@ namespace SimpleDependencyInjection
         public void FromGameObject<C>(C gameObject) where C : MonoBehaviour, T
         {
             From<T>(ServiceFactory.FromGameObject<C>(gameObject));
-        }
-    }
-
-    public static class ServiceCollectionExtensions
-    {
-        public static IServiceDescriptorHelperAs<T> Register<T>(this IServiceCollection serviceCollection) where T : class
-        {
-            return new ServiceDescriptorHelper<T>(serviceCollection);
         }
     }
 }

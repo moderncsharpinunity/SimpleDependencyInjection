@@ -1,5 +1,4 @@
-﻿using Cysharp.Threading.Tasks.Triggers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -50,7 +49,7 @@ namespace SimpleDependencyInjection
                     serviceScope.Setup(serviceProvider);
                 }
 
-                Inject((object)child, serviceScope != null ? serviceScope.ServiceProvider : serviceProvider);
+                Inject(child, serviceScope != null ? serviceScope.ServiceProvider : serviceProvider);
             }
         }
 
