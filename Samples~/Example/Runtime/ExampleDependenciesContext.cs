@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SimpleDependencyInjection;
+﻿using SimpleDependencyInjection;
+using System;
 using UnityEngine;
 
 namespace Example
 {
-    public class ExampleDependenciesContext : DependenciesContext
+    public class ExampleDependenciesContext : ServiceContext, IModule
     {
         [SerializeField]
         private ExampleDependencyMonoBehaviour exampleDependency;
@@ -17,16 +13,20 @@ namespace Example
 
         protected override void Setup()
         {
-            dependenciesCollection.Add(new Dependency { Type = typeof(ExampleDependencyMonoBehaviour), Factory = DependencyFactory.FromGameObject(exampleDependency), IsSingleton = true });
-
-            dependenciesCollection.Add(new Dependency { Type = typeof(ExampleDependencyPlainClass), Factory = DependencyFactory.FromClass<ExampleDependencyPlainClass>(), IsSingleton = false });
-
-            dependenciesCollection.Add(new Dependency { Type = typeof(ExampleDependencyNested), Factory = DependencyFactory.FromPrefab(exampleDependencyNested), IsSingleton = true });
+            AddModule(this);
         }
 
-        protected override void Configure()
+        public void Configure(IServiceCollection serviceCollection)
         {
-            
+            serviceCollection.Register<ExampleDependencyMonoBehaviour>().AsSingleton().FromGameObject(exampleDependency);
+
+            serviceCollection.Register<ExampleDependencyPlainClass>().AsTransient().FromSame();
+
+            serviceCollection.Register<ExampleDependencyNested>().AsSingleton().FromPrefab(exampleDependencyNested);
+        }
+
+        public void Init(IServiceProvider serviceProvider)
+        {
         }
     }
 }

@@ -7,9 +7,9 @@ namespace Example
 {
     public class ExampleDependant : MonoBehaviour
     {
-        [InjectField]
+        [Inject]
         private ExampleDependencyMonoBehaviour dependency = null;
-        [InjectField]
+        [Inject]
         private ExampleDependencyPlainClass dependency2 = null;
 
         void Awake()

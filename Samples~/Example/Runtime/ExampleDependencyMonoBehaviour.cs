@@ -7,7 +7,7 @@ namespace Example
 {
     public class ExampleDependencyMonoBehaviour : MonoBehaviour
     {
-        [InjectField]
+        [Inject]
         private ExampleDependencyNested dependencyNested;
 
         public void DoSomethingComplex()

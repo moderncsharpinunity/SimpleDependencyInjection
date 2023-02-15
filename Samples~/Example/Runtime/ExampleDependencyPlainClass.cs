@@ -10,7 +10,7 @@ namespace Example
 {
     public class ExampleDependencyPlainClass
     {
-        [InjectField]
+        [Inject]
         private ExampleDependencyNested dependencyNested;
 
         public void DoSomethingAlsoComplex()
