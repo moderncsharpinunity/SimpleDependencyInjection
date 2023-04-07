@@ -37,22 +37,21 @@ namespace SimpleDependencyInjection
 
         public static void InjectRecursively(MonoBehaviour monoBehaviour, IServiceProvider serviceProvider)
         {
-            var serviceScopeType = typeof(ServiceScope);
+            var serviceScopeType = typeof(GameObjectServiceScope);
             var children = monoBehaviour.GetComponentsInChildren<MonoBehaviour>(true);
             foreach (var child in children)
             {
                 if (serviceScopeType.IsAssignableFrom(child.GetType())) continue;
 
-                var serviceScope = (ServiceScope)child.GetComponentInParent(serviceScopeType);
+                var serviceScope = (GameObjectServiceScope)child.GetComponentInParent(serviceScopeType);
                 if (serviceScope != null && serviceScope.ServiceProvider == null)
                 {
-                    serviceScope.Setup(serviceProvider);
+                    serviceScope.Build(serviceProvider);
                 }
 
                 Inject(child, serviceScope != null ? serviceScope.ServiceProvider : serviceProvider);
             }
         }
-
 
         public static void Inject(object dependant, IServiceProvider serviceProvider)
         {

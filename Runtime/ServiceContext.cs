@@ -1,107 +1,63 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
-#if UNITASK
-using Task = Cysharp.Threading.Tasks.UniTask;
-#else
-using Task = System.Threading.Tasks.Task;
-#endif
+using UnityEngine.Assertions;
 
 namespace SimpleDependencyInjection
 {
-    [DefaultExecutionOrder(-1)]
-    public abstract class ServiceContext : MonoBehaviour
+    public class ServiceContext
     {
-        private readonly List<IModuleAsync> modules = new List<IModuleAsync>();
-        private ServiceProvider serviceProvider;
+        private readonly List<IModule> modules = new List<IModule>();
 
-        public IServiceProvider ServiceProvider => serviceProvider;
+        public IServiceProvider ServiceProvider { get; private set; }
 
-        private async void Awake()
+        public void Build(IServiceProvider parentServiceProvider = null)
         {
-            DontDestroyOnLoad(gameObject);
-            Setup();
-
-            gameObject.SetActive(false);
-
             var serviceCollection = new ServiceCollection();
             foreach (var module in modules)
             {
-                await module.Configure(serviceCollection);
+                module.Configure(serviceCollection);
             }
 
-            serviceProvider = new ServiceProvider(serviceCollection);
+            ServiceProvider = new ServiceProvider(serviceCollection, parentServiceProvider);
 
             foreach (var module in modules)
             {
-                await module.Init(serviceProvider);
+                module.Init(ServiceProvider);
             }
-
-            ServiceInjector.InjectRecursively(this, serviceProvider);
-
-            gameObject.SetActive(true);
         }
 
-        protected abstract void Setup();
-
-        protected void AddModule(IModule module)
+        public void AddModule(IModule module)
         {
-            modules.Add(new AsyncModuleConverter(module));
-        }
-
-        protected void AddModule(IModuleAsync module)
-        {
+            Assert.IsNotNull(module, "Modules cannot be null");
             modules.Add(module);
         }
 
-        protected void AddModule(Action configure, Action init = null)
+        public void AddModule(Action<IServiceCollection> configure, Action<IServiceProvider> init = null)
         {
+            Assert.IsNotNull(configure, "Module's configure cannot be null");
             modules.Add(new SimpleModule(configure, init));
         }
 
-        private class SimpleModule : IModuleAsync
+        private class SimpleModule : IModule
         {
-            private readonly Action configure;
-            private readonly Action init;
+            private readonly Action<IServiceCollection> configure;
+            private readonly Action<IServiceProvider> init;
 
-            public SimpleModule(Action configure, Action init)
+            public SimpleModule(Action<IServiceCollection> configure, Action<IServiceProvider> init)
             {
                 this.configure = configure;
                 this.init = init;
             }
 
-            public Task Configure(IServiceCollection serviceCollection)
+            public void Configure(IServiceCollection serviceCollection)
             {
-                configure?.Invoke();
-                return Task.CompletedTask;
+                configure?.Invoke(serviceCollection);
             }
 
-            public Task Init(IServiceProvider serviceProvider)
+            public void Init(IServiceProvider serviceProvider)
             {
-                init?.Invoke();
-                return Task.CompletedTask;
-            }
-        }
-
-        private class AsyncModuleConverter : IModuleAsync
-        {
-            private readonly IModule module;
-
-            public AsyncModuleConverter(IModule module)
-            {
-                this.module = module;
-            }
-
-            public Task Configure(IServiceCollection serviceCollection)
-            {
-                module.Configure(serviceCollection);
-                return Task.CompletedTask;
-            }
-
-            public Task Init(IServiceProvider serviceProvider)
-            {
-                module.Init(serviceProvider);
-                return Task.CompletedTask;
+                init?.Invoke(serviceProvider);
             }
         }
     }

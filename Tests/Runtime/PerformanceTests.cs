@@ -14,7 +14,7 @@ namespace SimpleDependencyInjection
         {
         }
 
-        private class TestServiceContext : ServiceContext
+        private class TestApp : AppServiceScope
         {
             protected override void Setup()
             {
@@ -39,7 +39,7 @@ namespace SimpleDependencyInjection
                     child.AddComponent<TestMonoBehaviour>();
                     if (totalChildrenCount % 100 == 0)
                     {
-                        child.AddComponent<ServiceScope>();
+                        child.AddComponent<GameObjectServiceScope>();
                     }
                     CreateChildren(child, childrenCount, level);
                 }
@@ -47,7 +47,7 @@ namespace SimpleDependencyInjection
 
             void IterateChildren(Transform transform, IServiceProvider serviceProvider)
             {
-                var serviceScope = transform.GetComponent<ServiceScope>();
+                var serviceScope = transform.GetComponent<GameObjectServiceScope>();
                 if (serviceScope != null)
                 {
                     serviceProvider = serviceScope.ServiceProvider;
@@ -68,7 +68,7 @@ namespace SimpleDependencyInjection
 
             stopWatch.Start();
             var root = new GameObject("root");
-            var serviceContext = root.AddComponent<TestServiceContext>();
+            var serviceContext = root.AddComponent<TestApp>();
             CreateChildren(root, 10, 1);
             stopWatch.Stop();
             Debug.Log($"Creating {totalChildrenCount} children took {stopWatch.Elapsed.TotalMilliseconds}");
@@ -77,7 +77,7 @@ namespace SimpleDependencyInjection
             for (int i = 0; i < 10; i++)
             {
                 stopWatch.Start();
-                var serviceScopeType = typeof(ServiceScope);
+                var serviceScopeType = typeof(GameObjectServiceScope);
                 var children = root.GetComponentsInChildren<MonoBehaviour>(true);
                 foreach (var child in children)
                 {
@@ -91,13 +91,13 @@ namespace SimpleDependencyInjection
             for (int i = 0; i < 10; i++)
             {
                 stopWatch.Start();
-                var serviceScopeType = typeof(ServiceScope);
+                var serviceScopeType = typeof(GameObjectServiceScope);
                 var children = root.GetComponentsInChildren<MonoBehaviour>(true);
                 foreach (var child in children)
                 {
                     if (serviceScopeType.IsAssignableFrom(child.GetType())) continue;
 
-                    var serviceScope = (ServiceScope)child.GetComponentInParent(serviceScopeType);
+                    var serviceScope = (GameObjectServiceScope)child.GetComponentInParent(serviceScopeType);
                 }
                 stopWatch.Stop();
             }
