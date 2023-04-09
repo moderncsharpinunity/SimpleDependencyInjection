@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -242,6 +242,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &705507995
@@ -351,6 +352,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1976565000}
   - component: {fileID: 1976564999}
+  - component: {fileID: 1976565001}
   m_Layer: 0
   m_Name: DependenciesContext
   m_TagString: Untagged
@@ -370,8 +372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b8ee10b04b06d346a5466372b68bfb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exampleDependency: {fileID: 3013664218450293428}
-  exampleDependencyNested: {fileID: 5614692339968541020, guid: b9d4ab25934e8e0439bc15bccab08c3d, type: 3}
+  exampleDependencyModule: {fileID: 0}
 --- !u!4 &1976565000
 Transform:
   m_ObjectHideFlags: 0
@@ -388,6 +389,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1976565001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976564998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a5546a2f65a65448290f28ec172dd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exampleDependency: {fileID: 3013664218450293428}
+  exampleDependencyNestedPrefab: {fileID: 5614692339968541020, guid: b9d4ab25934e8e0439bc15bccab08c3d, type: 3}
 --- !u!114 &3013664218450293428
 MonoBehaviour:
   m_ObjectHideFlags: 0
