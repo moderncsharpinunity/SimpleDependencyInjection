@@ -91,7 +91,17 @@ namespace SimpleDependencyInjection
 
             ServiceInjector.InjectRecursively(this, ServiceProvider);
             gameObject.SetActive(true);
+
+            await OnBuilt();
         }
+
+        /// <summary>Called once, after this scope has finished building and injecting its own
+        /// subtree — the hook a subclass overrides to do whatever needs the finished
+        /// <see cref="ServiceProvider"/> but isn't itself a <c>[Inject]</c> field (e.g. handing a
+        /// resolved service to a sibling MonoBehaviour that isn't allowed to reference this
+        /// package directly — CLAUDE.md rule 3). The default implementation does nothing. Mirrors
+        /// <see cref="AppServiceScope.OnBuilt"/>.</summary>
+        protected virtual UniTask OnBuilt() => UniTask.CompletedTask;
 
         protected virtual void OnDestroy()
         {
