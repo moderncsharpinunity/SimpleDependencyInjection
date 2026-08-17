@@ -87,9 +87,18 @@ namespace SimpleDependencyInjection
             gameObject.SetActive(true);
 
             Current = this; // last — see the class doc for why
+
+            await OnBuilt();
         }
 
         protected abstract void Setup();
+
+        /// <summary>Called once, after the scope has fully finished building and
+        /// <see cref="Current"/> is set — the hook a subclass overrides to do whatever
+        /// should happen once the container exists and this object's own subtree is
+        /// injected (e.g. navigate away from a splash/loading scene via an injected
+        /// <c>ISceneRouter</c>). The default implementation does nothing.</summary>
+        protected virtual UniTask OnBuilt() => UniTask.CompletedTask;
 
         public void PushServiceProvider(IServiceProvider serviceProvider)
         {
