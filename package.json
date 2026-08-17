@@ -1,8 +1,8 @@
 {
   "name": "com.moderncsharpinunity.simpledependencyinjection",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "displayName": "Simple Dependency Injection",
-  "description": "This is a simple dependency injection framework for Unity3D, started as part of a blog to explain how to build your own dependency injection in Unity3D, but now will be evolved and maintained as an independent software.",
+  "description": "This is a simple dependency injection framework for Unity3D, started as part of a blog to explain how to build your own dependency injection in Unity3D, but now will be evolved and maintained as an independent software.\n\n0.3.0 is a breaking release: the container is async-only (the synchronous ServiceContext/IModule are gone; what was ServiceContextAsync/IModuleAsync lost the \"Async\" suffix and gained progress reporting + cancellation), field and method injection now share one base-to-derived traversal per class hierarchy (previously only method injection walked base classes, and fields on a base class were silently skipped), GameObjectServiceScope can now self-bootstrap for scene-root usage, GlobalServiceScope.Activate() now correctly parents to the app scope, disposal exists for the first time (ServiceProvider/ServiceContext/every scope), and unresolved/failed injections throw specific exceptions naming the scope, object, member and service involved instead of a bare ArgumentException.",
   "unity": "2020.3",
   "documentationUrl": "https://moderncsharpinunity.github.io",
   "dependencies": {

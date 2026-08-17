@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using SimpleDependencyInjection;
 using System;
 using UnityEngine;
@@ -11,17 +12,20 @@ namespace Example
         [SerializeField]
         private ExampleDependencyNested exampleDependencyNestedPrefab;
 
-        public void Configure(IServiceCollection serviceCollection)
+        public UniTask Configure(IServiceCollection serviceCollection, ModuleContext context)
         {
             serviceCollection.Register<ExampleDependencyMonoBehaviour>().AsSingleton().FromGameObject(exampleDependency);
 
             serviceCollection.Register<ExampleDependencyPlainClass>().AsTransient().FromSame();
 
             serviceCollection.Register<ExampleDependencyNested>().AsSingleton().FromPrefab(exampleDependencyNestedPrefab);
+
+            return UniTask.CompletedTask;
         }
 
-        public void Init(IServiceProvider serviceProvider)
+        public UniTask Init(IServiceProvider serviceProvider, ModuleContext context)
         {
+            return UniTask.CompletedTask;
         }
     }
 }
