@@ -83,7 +83,18 @@ namespace SimpleDependencyInjection
                 var serviceScope = (GameObjectServiceScope)child.GetComponentInParent(serviceScopeType, true);
                 if (serviceScope != null)
                 {
-                    if (serviceScope.Injected) continue; // the scope owns its whole subtree once claimed
+                    // The scope owns its whole subtree once claimed — EXCEPT when the scope
+                    // claiming it is the very one making this call, on itself: `Injected` is
+                    // set true at the top of GameObjectServiceScope's own self-bootstrap,
+                    // before this method runs, specifically so an ANCESTOR's sweep won't also
+                    // inject a self-bootstrapping descendant's children. Applying that same
+                    // guard to the descendant's own call, on its own children, incorrectly
+                    // self-blocks — every plain (non-scope) child of a self-bootstrapping scope
+                    // would never be field-injected at all. Bug found via GameplayDriver/
+                    // GameplayCheats (Swingy.Composition) — the first real MonoBehaviours
+                    // anywhere with `[Inject]` fields living directly under a scene scope
+                    // rather than being the scope itself.
+                    if (serviceScope.Injected && !ReferenceEquals(serviceScope, monoBehaviour)) continue;
                     if (serviceScope.ServiceProvider == null)
                     {
                         failures.Add(new ServiceScopeNotReadyException(child,
